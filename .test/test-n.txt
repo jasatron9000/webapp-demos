@@ -1,0 +1,23 @@
+import { NextPage } from "next"
+import Head from "next/head"
+
+interface Props {
+    name: string
+}
+
+const Test[[EDIT]]: NextPage<Props> = () => {
+    return (
+        <>
+        <Head>
+            <meta name="application-name" content="[[NAME]]"/>
+            <meta name="description" content="[[DESCRIPTION]]"/>
+        </Head>
+        <main>
+            <h1>[[CONTENT]]</h1>
+            <p>[[PARAGRAPH]]</p>
+        </main>
+        </>
+    )
+}
+
+export default Test[[EDIT]]

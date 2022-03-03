@@ -1,16 +1,36 @@
+:root {
+    --secondary: #B9BDCA;
+    --secondary-low: #8B92A7;
+    --primary: #111317;
+    --primary-low: #1A1D23;
+    --accent: #9a8c98;
+
+    --primary-transparent: #111317d3;
+}
+
 html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    padding: 0;
+    margin: 0;
+    font-family: 'Inconsolata', Verdana, Geneva, Tahoma, sans-serif;
+    background-color: var(--primary);
+    color: var(--secondary);
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+footer {
+    height: 8em;
+    border-top: 1px solid var(--secondary); 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

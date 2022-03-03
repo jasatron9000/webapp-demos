@@ -1,0 +1,48 @@
+.card {
+    cursor:pointer;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-sizing: content-box;
+
+    background-color: var(--primary-low);
+    border: 1px solid var(--secondary);
+    color: var(--secondary);
+
+    flex: 1 1 30rem;
+    width: clamp(10rem, 100%, 21rem);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+
+}
+
+.card[data-isActive="true"] {
+    cursor: unset;
+    transform: scale(0.6);
+    filter: blur(2px)
+    
+}
+
+.imageContainer {
+    object-fit: cover;
+    width: 100%;
+    aspect-ratio: 16/9;
+}
+
+.textBox {
+    padding: 0.2rem 0.5rem;
+    border-top: 1px solid var(--secondary);
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.textBox > h2 {
+    margin-block: 0.25rem;
+    padding: 0;
+    font-weight: 900;
+}

@@ -3,4 +3,12 @@ const nextConfig = {
   reactStrictMode: true,
 }
 
-module.exports = nextConfig
+const menu = require("./libraries/menu")
+
+module.exports = (phare, { defaultConfig }) => {
+    return {
+        env: {
+            menu: menu.get("pages/demos/")
+        }
+    }
+}
