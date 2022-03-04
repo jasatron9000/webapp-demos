@@ -1,9 +1,6 @@
 
-import { useEffect, useState } from 'react'
-
 import styles from "../styles/components/Navbar.module.css"
 import Link from "next/link"
-import { AnimatePresence, motion } from "framer-motion"
 
 // animations
 const hidden = {
@@ -30,7 +27,7 @@ const NavBar = () => {
     return (
         <nav className={styles.navbar}>
             <ul className={`${styles.ul}`}>
-                <Link href="/">
+                <Link href="/" passHref>
                     <li>Home</li>
                 </Link>
             </ul>

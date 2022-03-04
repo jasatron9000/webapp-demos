@@ -32,12 +32,16 @@
     overflow: hidden;
 }
 
+.textBox {
+    width: 100%;
+}
+
 .textBox > h2 {
     margin-block: 0.25rem;
     padding-inline: 1rem;
     padding-top: 0.5rem;
     font-weight: 900;
-    border-block: 1px solid var(--secondary)
+    border-block: 1px solid var(--secondary);
 }
 
 .textBox > p {

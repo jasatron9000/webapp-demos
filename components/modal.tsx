@@ -10,23 +10,6 @@ interface Props {
     onClickHandle?: (index: number) => void
 }
 
-
-const CardButton = React.forwardRef<any, {onClick?: React.MouseEventHandler, href?: string}>(({ onClick, href }, ref) => {
-    return (
-        <div className={styles.link}>
-            <motion.a 
-                whileHover={{scale: 1.1}}
-                whileTap={{scale: 0.9}}
-                href={href} 
-                onClick={onClick} 
-                ref={ref} 
-            >
-                Go To Demo
-            </motion.a>
-        </div>
-    )
-})
-
 const modal:Variants = {
     hiddenModal: {
         y: "100vh",
@@ -54,6 +37,24 @@ const Modal: React.FC<Props> = ({
     page
 }) => {
     const imgLink:string = (page.blurb_image) ? page.blurb_image : "/no_pic.png"
+    
+    const CardButton = React.forwardRef<any, {onClick?: React.MouseEventHandler, href?: string}>(({ onClick, href }, ref) => {
+        return (
+            <div className={styles.link}>
+                <motion.a 
+                    whileHover={{scale: 1.1}}
+                    whileTap={{scale: 0.9}}
+                    href={href} 
+                    onClick={onClick} 
+                    ref={ref} 
+                >
+                    Go To Demo
+                </motion.a>
+            </div>
+        )
+    })
+
+    CardButton.displayName = "CardButton"
 
     return (
         <>
@@ -66,7 +67,7 @@ const Modal: React.FC<Props> = ({
                 onClick={(e) => (e.stopPropagation())}
             >
                 <div className={styles.imageContainer}>
-                    <Image src={imgLink} width="1600" height="900" layout="responsive" />
+                    <Image src={imgLink} width="1600" height="900" layout="responsive" alt={page.application_name}/>
                 </div>
                 <div className={styles.textBox}>
                     <h2>{page.application_name}</h2>

@@ -30,7 +30,6 @@ const Home: NextPage = () => {
     let newData: PagesMetaData[] = []
     if (process.env.menu) {
         newData = JSON.parse(process.env.menu)
-        console.log(newData);
     }
 
     const onClickCard = (index: number) => {

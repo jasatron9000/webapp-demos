@@ -10,15 +10,6 @@ interface Props {
     onClickHandle: (index: number) => void
 }
 
-
-const CardButton = React.forwardRef<any, {onClick?: React.MouseEventHandler, href?: string}>(({ onClick, href }, ref) => {
-    return (
-        <a href={href} onClick={onClick} ref={ref} className={styles.link}>
-            Click Me
-        </a>
-    )
-})
-
 const largeCard:Variants = {
     enter: {
         y: 15,
@@ -65,7 +56,7 @@ const Card: React.FC<Props> = ({
                 onClick={() => {onClickHandle(index)}}
             >
                 <div className={styles.imageContainer}>
-                    <Image src={imgLink} width="1600" height="900" layout="responsive" />
+                    <Image src={imgLink} width="1600" height="900" layout="responsive" alt={page.application_name}/>
                 </div>
                 <div className={styles.textBox}>
                     <h2>{page.application_name}</h2>
