@@ -1,29 +1,24 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 
+type Viewport = [
+    THREE.Scene,
+    THREE.PerspectiveCamera,
+    THREE.WebGLRenderer
+]
 
-const useBasicViewport = () => {
-    const scene = useRef<THREE.Scene>()
-    const camera = useRef<THREE.PerspectiveCamera>()
-    const renderer = useRef<THREE.WebGLRenderer>()
+const useBasicViewport = (): Viewport => {
+    const scene = useRef<THREE.Scene>(new THREE.Scene())
+    const camera = useRef<THREE.PerspectiveCamera>(new THREE.PerspectiveCamera())
+    const renderer = useRef<THREE.WebGLRenderer>(new THREE.WebGLRenderer())
 
     useEffect(() => {
-        scene.current = new THREE.Scene(),
-        camera.current = new THREE.PerspectiveCamera(),
+        scene.current = new THREE.Scene()
+        camera.current = new THREE.PerspectiveCamera()
         renderer.current = new THREE.WebGLRenderer()
-
     }, [])
 
-    function setViewport(callbackfn: (
-        scene?: THREE.Scene,
-        camera?: THREE.PerspectiveCamera,
-        renderer?: THREE.WebGLRenderer
-    ) => void){
-        callbackfn(scene.current, camera.current, renderer.current)
-    }
-
-
-    return [scene, camera, renderer, setViewport]
+    return [scene.current, camera.current, renderer.current]
 }
 
 export default useBasicViewport

@@ -6,9 +6,10 @@ import { useEffect, useRef } from 'react'
 import styles from "../../../styles/LowPolyWave.module.css"
 import { GUI } from 'dat.gui'
 import { motion } from 'framer-motion'
+import { GUIOptions } from '../hooks/useGUI'
 
 const LowPolyWaveComponent: React.FC = () => {
-    const [scene, camera, renderer, setViewport] = useBasicViewport()
+    const [scene, camera, renderer] = useBasicViewport()
     const guiRef = useRef<GUI>()
 
     const mainRef = useRef<HTMLElement | null>(null)
@@ -18,12 +19,29 @@ const LowPolyWaveComponent: React.FC = () => {
         let meshArray: THREE.BufferAttribute | THREE.InterleavedBufferAttribute = mesh.geometry.getAttribute('position')
         
         for (let i = 0; i < meshArray.count; i++) {
-            meshArray.setZ(i, (Math.random() * 0.25) - 0.125)
+            meshArray.setZ(i, (Math.random() * 0.05) - 0.025)
         }
 
         mesh.geometry.setAttribute('position', meshArray)
     }
+
+    const waveFn = (x: number, y: number, amplitude: number, frequency: number) => {
+        return amplitude * Math.sin(frequency * (x + y))
+    }
     
+    const waveMesh = (mesh: THREE.Mesh, offset: number): void => {
+        let meshArray: THREE.BufferAttribute | THREE.InterleavedBufferAttribute = mesh.geometry.getAttribute('position')
+
+        for (let i = 0; i < meshArray.count; i++) {
+            const [X, Y, Z] = [meshArray.getX(i), meshArray.getY(i), meshArray.getZ(i)]
+
+            const ZR = waveFn(X - offset, Y, 0.25, 1 / 3) + waveFn(X, Y + offset, 0.01, 8)
+            meshArray.setZ(i, ZR + Z)
+        }
+
+        mesh.geometry.setAttribute('position', meshArray)
+
+    }
     
     useEffect(() => {
         const main = mainRef.current
@@ -33,8 +51,20 @@ const LowPolyWaveComponent: React.FC = () => {
             plane: {
                 width: 5,
                 height: 5,
-                widthSegments: 10,
-                heightSegments: 10,
+                widthSegments: 50,
+                heightSegments: 50,
+            },
+            light: {
+                position: {
+                    x: 0,
+                    y: 0,
+                    z: 1
+                },
+                rotation: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
             }
         }
 
@@ -53,47 +83,69 @@ const LowPolyWaveComponent: React.FC = () => {
 
             // GUI
             guiRef.current = new GUI()
-            guiRef.current.add(world.plane, 'width', 1, 10, 0.05).onChange(updatePlaneMesh)
-            guiRef.current.add(world.plane, 'height', 1, 10, 0.05).onChange(updatePlaneMesh)
-            guiRef.current.add(world.plane, 'widthSegments', 1, 20, 1).onChange(updatePlaneMesh)
-            guiRef.current.add(world.plane, 'heightSegments', 1, 20, 1).onChange(updatePlaneMesh)
+            // guiRef.current.add(world.plane, 'width', 1, 10, 0.05).onChange(updatePlaneMesh)
+            // guiRef.current.add(world.plane, 'height', 1, 10, 0.05).onChange(updatePlaneMesh)
+            // guiRef.current.add(world.plane, 'widthSegments', 1, 100, 1).onChange(updatePlaneMesh)
+            // guiRef.current.add(world.plane, 'heightSegments', 1, 100, 1).onChange(updatePlaneMesh)
+            
 
             // set up the scene, camera and renderer
-            setViewport((scene, camera, ) => {
+            camera.aspect = width / height
+            camera.updateProjectionMatrix()
+            scene.background = new THREE.Color( 0xdff9fb )
+            renderer.setSize(width, height)
 
-            })
-            
-            main.appendChild(rendererRef.current.domElement)
+
+            main.appendChild(renderer.domElement)
             controller.appendChild(guiRef.current.domElement)
 
+            // load in texture
+            const texLoader = new THREE.TextureLoader()
+            const waveNormalMap1 = texLoader.load('/res/water_normals_1.png')
+
+            waveNormalMap1.wrapS = THREE.RepeatWrapping;
+            waveNormalMap1.wrapT = THREE.RepeatWrapping;
+
             // add controller
-            const controls = new OrbitControls(cameraRef.current, rendererRef.current.domElement)
+            const controls = new OrbitControls(camera, renderer.domElement)
 
             // insert a new plane geomery
             const planeGeometry = new THREE.PlaneGeometry(
-                5, 5, 10, 10
+                5, 5, 500, 500
             )
             const planeMaterial = new THREE.MeshPhongMaterial({
                 color: 0xf6b93b,
                 side: THREE.DoubleSide,
-                flatShading: true
+                displacementMap: waveNormalMap1,
+                displacementScale: 0.1,
+                normalMap: waveNormalMap1
             })
             const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
-            sceneRef.current.add(planeMesh)
-
-            randomiseMesh(planeMesh)
+            
+            
 
             // add light to the scene
             const light = new THREE.DirectionalLight(
                 0xffffff,
                 1
             )
+
+            const lightOpt = guiRef.current.addFolder('Light')
+            const lightPosOpt = lightOpt.addFolder('Position')
+            lightPosOpt.add(light.position, "x", -5, 5)
+            lightPosOpt.add(light.position, "y", -5, 5)
+            lightPosOpt.add(light.position, "z", -5, 5)
+            lightPosOpt.open()
+            lightOpt.open()
+
             light.position.set(0, 0, 1)
-            sceneRef.current.add(light)
+            
+            scene.add(planeMesh)
+            scene.add(light)
 
             // move camera back and render
-            cameraRef.current.position.z = 5
-            rendererRef.current.render(sceneRef.current, cameraRef.current)
+            camera.position.z = 5
+            renderer.render(scene, camera)
             controls.update()
 
             const animate = (
@@ -102,12 +154,19 @@ const LowPolyWaveComponent: React.FC = () => {
                 scene: THREE.Scene,
                 camera: THREE.Camera
             ) => {
-                requestAnimationFrame(() => {animate(offset + 0.25, renderer, scene, camera)})
+                requestAnimationFrame(() => {animate(offset + 0.001, renderer, scene, camera)})
                 renderer.render(scene, camera)
                 controls.update()
+
+                if (planeMesh.material.normalMap) {
+                    planeMesh.material.normalMap.offset = new THREE.Vector2(offset, offset)
+                    planeMesh.material.normalMap.updateMatrix()
+                }
+                
+
                 
             }
-            animate(0, rendererRef.current, sceneRef.current ,cameraRef.current)
+            animate(0, renderer, scene ,camera)
         }
 
         return () => {
