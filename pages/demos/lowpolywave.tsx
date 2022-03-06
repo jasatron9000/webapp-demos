@@ -13,6 +13,7 @@ const TerrainGenerator: NextPage = () => {
         <Head>
             <meta name="application-name" content="Low-poly Wave Example"/>
             <meta name="description" content="Simple low poly wave."/>
+            <meta name="blurb-image" content="/lowpolywave.png"/>
         </Head>
 
         <DynamicComponent />

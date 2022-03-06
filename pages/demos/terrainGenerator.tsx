@@ -13,6 +13,7 @@ const TerrainGenerator: NextPage = () => {
             <Head>
                 <meta name="application-name" content="Terrain Generator" />
                 <meta name="description" content="Procedurally generates a 3D Terrain based on a 2D Perlin Noise to generate the height map. Options are available to customise the look of the terrain to however you want." />
+                <meta name="blurb-image" content="/terrainGenerator.png" />
             </Head>
 
             <DynamicComponent />
