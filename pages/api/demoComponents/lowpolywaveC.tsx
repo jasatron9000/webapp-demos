@@ -14,10 +14,10 @@ const LowPolyWaveComponent: React.FC = () => {
 
     const mainRef = useRef<HTMLElement | null>(null)
     const controllerRef = useRef<HTMLDivElement | null>(null)
-    
+
     const randomiseMesh = (mesh: THREE.Mesh): void => {
         let meshArray: THREE.BufferAttribute | THREE.InterleavedBufferAttribute = mesh.geometry.getAttribute('position')
-        
+
         for (let i = 0; i < meshArray.count; i++) {
             meshArray.setZ(i, (Math.random() * 0.05) - 0.025)
         }
@@ -28,7 +28,7 @@ const LowPolyWaveComponent: React.FC = () => {
     const waveFn = (x: number, y: number, amplitude: number, frequency: number) => {
         return amplitude * Math.sin(frequency * (x + y))
     }
-    
+
     const waveMesh = (mesh: THREE.Mesh, offset: number): void => {
         let meshArray: THREE.BufferAttribute | THREE.InterleavedBufferAttribute = mesh.geometry.getAttribute('position')
 
@@ -42,7 +42,7 @@ const LowPolyWaveComponent: React.FC = () => {
         mesh.geometry.setAttribute('position', meshArray)
 
     }
-    
+
     useEffect(() => {
         const main = mainRef.current
         const controller = controllerRef.current
@@ -68,16 +68,16 @@ const LowPolyWaveComponent: React.FC = () => {
             }
         }
 
-        if(main && controller) {
+        if (main && controller) {
             const { width, height } = main.getBoundingClientRect()
             const updatePlaneMesh = (): void => {
                 planeMesh.geometry.dispose()
                 planeMesh.geometry = new THREE.PlaneGeometry(
-                    world.plane.width, 
+                    world.plane.width,
                     world.plane.height,
                     world.plane.widthSegments,
                     world.plane.heightSegments)
-                
+
                 randomiseMesh(planeMesh)
             }
 
@@ -87,12 +87,13 @@ const LowPolyWaveComponent: React.FC = () => {
             // guiRef.current.add(world.plane, 'height', 1, 10, 0.05).onChange(updatePlaneMesh)
             // guiRef.current.add(world.plane, 'widthSegments', 1, 100, 1).onChange(updatePlaneMesh)
             // guiRef.current.add(world.plane, 'heightSegments', 1, 100, 1).onChange(updatePlaneMesh)
-            
+
 
             // set up the scene, camera and renderer
             camera.aspect = width / height
+            camera.position.y = 1;
             camera.updateProjectionMatrix()
-            scene.background = new THREE.Color( 0xdff9fb )
+            scene.background = new THREE.Color(0xc7ecee)
             renderer.setSize(width, height)
 
 
@@ -111,23 +112,23 @@ const LowPolyWaveComponent: React.FC = () => {
 
             // insert a new plane geomery
             const planeGeometry = new THREE.PlaneGeometry(
-                5, 5, 500, 500
+                40, 40, 500, 500
             )
             const planeMaterial = new THREE.MeshPhongMaterial({
-                color: 0xf6b93b,
+                color: 0x487eb0,
                 side: THREE.DoubleSide,
                 displacementMap: waveNormalMap1,
-                displacementScale: 0.1,
+                displacementScale: -0.2,
                 normalMap: waveNormalMap1
             })
             const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
-            
-            
+            planeMesh.rotation.x = THREE.MathUtils.degToRad(-90)
+
 
             // add light to the scene
             const light = new THREE.DirectionalLight(
                 0xffffff,
-                1
+                1.5
             )
 
             const lightOpt = guiRef.current.addFolder('Light')
@@ -138,8 +139,8 @@ const LowPolyWaveComponent: React.FC = () => {
             lightPosOpt.open()
             lightOpt.open()
 
-            light.position.set(0, 0, 1)
-            
+            light.position.set(0, 1, 1)
+
             scene.add(planeMesh)
             scene.add(light)
 
@@ -150,11 +151,11 @@ const LowPolyWaveComponent: React.FC = () => {
 
             const animate = (
                 offset: number,
-                renderer: THREE.WebGLRenderer, 
+                renderer: THREE.WebGLRenderer,
                 scene: THREE.Scene,
                 camera: THREE.Camera
             ) => {
-                requestAnimationFrame(() => {animate(offset + 0.001, renderer, scene, camera)})
+                requestAnimationFrame(() => { animate(offset + 0.001, renderer, scene, camera) })
                 renderer.render(scene, camera)
                 controls.update()
 
@@ -162,11 +163,11 @@ const LowPolyWaveComponent: React.FC = () => {
                     planeMesh.material.normalMap.offset = new THREE.Vector2(offset, offset)
                     planeMesh.material.normalMap.updateMatrix()
                 }
-                
 
-                
+
+
             }
-            animate(0, renderer, scene ,camera)
+            animate(0, renderer, scene, camera)
         }
 
         return () => {
@@ -175,14 +176,14 @@ const LowPolyWaveComponent: React.FC = () => {
                 controller.innerHTML = ''
             }
         }
-        
+
     }, [])
 
     return (
         <>
-            <main ref={mainRef} className={styles.main}/>
+            <main ref={mainRef} className={styles.main} />
             <motion.div
-                ref={controllerRef} 
+                ref={controllerRef}
                 className={styles.controller}
             >
             </motion.div>
